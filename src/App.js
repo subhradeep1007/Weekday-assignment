@@ -1,8 +1,9 @@
 import logo from "./logo.svg";
 import "./App.css";
+import FilterJobs from "./Pages/FilterJobs";
 
 function App() {
-  return <div className="App">App</div>;
+  return <FilterJobs />;
 }
 
 export default App;
