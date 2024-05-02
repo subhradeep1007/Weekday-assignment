@@ -1,12 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { fetchJobs } from "../../ApiActions";
+import JobCard from "../../Components/JobCard";
+import { Wrapper } from "./styles";
 
 const FilterJobs = () => {
+  const [jobs, setJobs] = useState([]);
+
   useEffect(() => {
     const getJobs = async () => {
       try {
         const response = await fetchJobs();
-        console.log("jobs fetched", response);
+        setJobs(response?.jdList);
       } catch (error) {
         console.error(error);
       }
@@ -14,7 +18,13 @@ const FilterJobs = () => {
     getJobs();
   }, []);
 
-  return <div>FilterJobs</div>;
+  return (
+    <Wrapper>
+      {jobs.map((job) => (
+        <JobCard data={job} key={job.jdUid} />
+      ))}
+    </Wrapper>
+  );
 };
 
 export default FilterJobs;
