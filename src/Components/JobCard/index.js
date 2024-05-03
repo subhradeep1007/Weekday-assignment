@@ -29,6 +29,7 @@ const JobCard = (props) => {
     maxExp,
     minExp,
     maxJdSalary,
+    companyName,
   } = data;
   return (
     <Wrapper>
@@ -36,7 +37,7 @@ const JobCard = (props) => {
       <CompanyDetailsWrapper>
         <CompanyImg />
         <CompanyDetails>
-          <Name>Spyne</Name>
+          <Name>{companyName || "Company"}</Name>
           <Role>{capitalizeFirstLetter(jobRole)}</Role>
           <Venue>{capitalizeFirstLetter(location)}</Venue>
         </CompanyDetails>

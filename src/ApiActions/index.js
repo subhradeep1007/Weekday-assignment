@@ -2,7 +2,7 @@ const myHeaders = new Headers();
 myHeaders.append("Content-Type", "application/json");
 
 const defaultOffsetConfig = {
-  limit: 10,
+  limit: 8,
   offset: 0,
 };
 
@@ -11,7 +11,7 @@ const requestOptions = {
   headers: myHeaders,
 };
 
-export async function fetchJobs(offsetConfig = defaultOffsetConfig) {
+export async function fetchJobs(offsetConfig) {
   const url = "https://api.weekday.technology/adhoc/getSampleJdJSON";
   try {
     const response = await fetch(url, {

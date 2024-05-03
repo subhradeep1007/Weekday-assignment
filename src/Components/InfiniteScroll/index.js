@@ -10,13 +10,11 @@ import styled from "styled-components";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  border: 2px solid red;
 `;
 
 const Footer = styled.div`
   height: 2px;
   width: 100%;
-  border: 2px solid red;
 `;
 
 const InfiniteScroll = (props) => {
