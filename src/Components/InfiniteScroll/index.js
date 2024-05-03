@@ -42,7 +42,6 @@ const InfiniteScroll = (props) => {
   const handleObserver = useCallback(
     (entries) => {
       const entry = entries[0];
-      console.log("entry", entry);
       if (entry?.isIntersecting) {
         hasMore && next();
       }

@@ -4,12 +4,14 @@ import InfiniteScroll from "../../Components/InfiniteScroll";
 import JobCard from "../../Components/JobCard";
 import CustomFilters from "../../Components/CustomFilters";
 import { Wrapper } from "./styles";
+import { getFilterConfig, getFilteredJobs } from "../../utils/filterHelper";
 
+const limit = 10;
 const FilterJobs = () => {
-  const limit = 10;
   const [filterConfig, setFilterConfig] = useState([]);
   const [offSet, setOffSet] = useState(0);
   const [jobs, setJobs] = useState([]);
+  const [filteredJobs, setfilteredJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [totalJobCount, setTotalJobCount] = useState(0);
 
@@ -22,7 +24,10 @@ const FilterJobs = () => {
     setIsLoading(true);
     try {
       const response = await fetchJobs({ limit, offset: offset + 1 });
-      setJobs(jobs.concat(response?.jdList || []));
+      const _jobs = jobs.concat(response?.jdList || []);
+      setJobs(_jobs);
+      filteredJobs.length > 0 &&
+        setfilteredJobs(getFilteredJobs(filterConfig, _jobs));
       setOffSet(offSet + 1);
       totalJobCount === 0 && setTotalJobCount(response?.totalCount);
       setIsLoading(false);
@@ -36,51 +41,25 @@ const FilterJobs = () => {
     getJobs(offSet);
   }, []);
 
-  const getFilteredJobs = (_filterConfig) => {
-    return jobs.filter((job) =>
-      _filterConfig.every((filterValue) =>
-        Object.keys(filterValue).every((key) => {
-          switch (key) {
-            case "minExp":
-            case "minJdSalary":
-              return job[key] >= filterValue[key];
-            case "location":
-              if (filterValue[key] === "remote") return job[key] === "remote";
-              else return job[key] !== "remote";
-            case "jobRole":
-              return job[key] == filterValue[key];
-          }
-        })
-      )
-    );
-  };
-
   const changeFilterConfig = (property, value) => {
-    let _temp = JSON.parse(JSON.stringify(filterConfig));
-    let flag = false;
-    _temp.map((filter) => {
-      if (filter[property]) {
-        filter[property] = value;
-        flag = true;
-      }
-    });
-    if (!flag) {
-      _temp.push({ [property]: value });
-    }
-    setFilterConfig(_temp);
-    setJobs(getFilteredJobs(_temp));
+    const _filterConfig = getFilterConfig(property, value, filterConfig);
+    setFilterConfig(_filterConfig);
+    setfilteredJobs(getFilteredJobs(_filterConfig, jobs));
   };
 
   const handleSearch = (searchTerm) => {
     setFilterConfig([]);
     const results = jobs.filter((job) => {
-      const x = job?.companyName
+      return job?.companyName
         ?.toLowerCase()
         ?.includes(searchTerm?.toLowerCase());
-      return x;
     });
-    console.log("results", results, jobs);
-    setJobs(results);
+    setfilteredJobs(results);
+  };
+
+  const renderContent = () => {
+    const _jobs = filteredJobs.length > 0 ? filteredJobs : jobs;
+    return _jobs.map((job, index) => <JobCard data={job} key={index} />);
   };
 
   return (
@@ -97,11 +76,7 @@ const FilterJobs = () => {
         dataLength={jobs.length}
         hasMore={hasMoreJobs}
       >
-        <Wrapper>
-          {jobs.map((job, index) => (
-            <JobCard data={job} key={index} />
-          ))}
-        </Wrapper>
+        <Wrapper>{renderContent()}</Wrapper>
       </InfiniteScroll>
     </>
   );
