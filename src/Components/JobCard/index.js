@@ -30,12 +30,13 @@ const JobCard = (props) => {
     minExp,
     maxJdSalary,
     companyName,
+    logoUrl,
   } = data;
   return (
     <Wrapper>
       <TimePosted>⏳ Posted 11 hours ago</TimePosted>
       <CompanyDetailsWrapper>
-        <CompanyImg />
+        <CompanyImg src={logoUrl} alt="Company Logo" />
         <CompanyDetails>
           <Name>{companyName || "Company"}</Name>
           <Role>{capitalizeFirstLetter(jobRole)}</Role>

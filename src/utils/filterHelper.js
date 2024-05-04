@@ -15,8 +15,8 @@ export function getFilterConfig(property, value, filterConfig) {
 }
 
 //helper for creating custom filters
-export function getFilteredJobs(_filterConfig, jobs) {
-  return jobs.filter((job) =>
+export function getFilteredJobs(_filterConfig, jobs, searchTerm) {
+  const _filtered = jobs?.filter((job) =>
     _filterConfig.every((filterValue) =>
       Object.keys(filterValue).every((key) => {
         switch (key) {
@@ -27,11 +27,21 @@ export function getFilteredJobs(_filterConfig, jobs) {
             if (filterValue[key] === "remote") return job[key] === "remote";
             else return job[key] !== "remote";
           case "jobRole":
-            return job[key] == filterValue[key];
+            return job[key] === filterValue[key];
         }
       })
     )
   );
+  const results =
+    searchTerm?.length > 0
+      ? _filtered.filter((job) => {
+          return job?.companyName
+            ?.toLowerCase()
+            ?.includes(searchTerm?.toLowerCase());
+        })
+      : _filtered;
+
+  return results;
 }
 
 export function debounce(fn, duration = 400) {

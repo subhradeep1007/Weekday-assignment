@@ -1,14 +1,11 @@
 import styled from "styled-components";
 
 export const Wrapper = styled.div`
-  //max-height: 30rem;
   overflow: hidden;
-  width: 95%;
+  width: 91%;
   background-color: rgb(255, 255, 255);
   display: flex;
   flex-direction: column;
-  //justify-content: space-between;
-  //align-items: center;
   gap: 0.8rem;
   border-radius: 20px;
   padding: 16px 16px;
@@ -32,8 +29,8 @@ export const CompanyDetailsWrapper = styled.div`
 `;
 
 export const CompanyImg = styled.img`
-  height: 1.2rem;
-  width: 1.2rem;
+  height: 1.5rem;
+  width: 1.5rem;
   border-radius: 50%;
   background: gray;
 `;
@@ -88,7 +85,6 @@ export const AboutContent = styled.div`
     rgb(255, 255, 255),
     rgba(255, 255, 255, 0)
   );
-  //position: relative;
 `;
 
 export const Footer = styled.div`

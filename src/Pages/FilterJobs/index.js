@@ -3,11 +3,13 @@ import { fetchJobs } from "../../ApiActions";
 import InfiniteScroll from "../../Components/InfiniteScroll";
 import JobCard from "../../Components/JobCard";
 import CustomFilters from "../../Components/CustomFilters";
-import { Wrapper } from "./styles";
+import { ContentWrapper, Loader, Wrapper } from "./styles";
+import ZerothState from "../../Components/zerothState";
 import { getFilterConfig, getFilteredJobs } from "../../utils/filterHelper";
 
 const limit = 10;
 const FilterJobs = () => {
+  const [searchTerm, setSearchTerm] = useState("");
   const [filterConfig, setFilterConfig] = useState([]);
   const [offSet, setOffSet] = useState(0);
   const [jobs, setJobs] = useState([]);
@@ -20,6 +22,12 @@ const FilterJobs = () => {
     [totalJobCount, offSet]
   );
 
+  const renderedJobs = useMemo(
+    () =>
+      filterConfig.length > 0 || searchTerm.length > 0 ? filteredJobs : jobs,
+    [filterConfig, searchTerm, filteredJobs, jobs]
+  );
+
   const getJobs = async (offset) => {
     setIsLoading(true);
     try {
@@ -27,7 +35,7 @@ const FilterJobs = () => {
       const _jobs = jobs.concat(response?.jdList || []);
       setJobs(_jobs);
       filteredJobs.length > 0 &&
-        setfilteredJobs(getFilteredJobs(filterConfig, _jobs));
+        setfilteredJobs(getFilteredJobs(filterConfig, _jobs, searchTerm));
       setOffSet(offSet + 1);
       totalJobCount === 0 && setTotalJobCount(response?.totalCount);
       setIsLoading(false);
@@ -48,37 +56,44 @@ const FilterJobs = () => {
   };
 
   const handleSearch = (searchTerm) => {
-    setFilterConfig([]);
+    setSearchTerm(searchTerm);
     const results = jobs.filter((job) => {
       return job?.companyName
         ?.toLowerCase()
         ?.includes(searchTerm?.toLowerCase());
     });
+    console.log("results", results);
     setfilteredJobs(results);
   };
 
-  const renderContent = () => {
-    const _jobs = filteredJobs.length > 0 ? filteredJobs : jobs;
-    return _jobs.map((job, index) => <JobCard data={job} key={index} />);
-  };
-
   return (
-    <>
+    <Wrapper>
       <CustomFilters
         handleFilterChange={changeFilterConfig}
         handleSearch={handleSearch}
       />
-      <InfiniteScroll
-        next={() => getJobs(offSet)}
-        className="infinte"
-        isLoading={isLoading}
-        scrollToTop={false}
-        dataLength={jobs.length}
-        hasMore={hasMoreJobs}
-      >
-        <Wrapper>{renderContent()}</Wrapper>
-      </InfiniteScroll>
-    </>
+      {isLoading && renderedJobs.length == 0 ? (
+        <Loader>Fetching Jobs</Loader>
+      ) : renderedJobs.length === 0 && !isLoading ? (
+        <ZerothState />
+      ) : (
+        <InfiniteScroll
+          next={() => getJobs(offSet)}
+          className="infinte"
+          isLoading={isLoading}
+          scrollToTop={false}
+          dataLength={jobs.length}
+          hasMore={hasMoreJobs}
+          loader={<Loader>Fetching Jobs</Loader>}
+        >
+          <ContentWrapper>
+            {renderedJobs.map((job, index) => (
+              <JobCard data={job} key={index} />
+            ))}
+          </ContentWrapper>
+        </InfiniteScroll>
+      )}
+    </Wrapper>
   );
 };
 
