@@ -15,7 +15,7 @@ export const ContentWrapper = styled.div`
   @media screen and (max-width: 480px) {
     grid-template-columns: 1fr;
   }
-  column-gap: 3rem;
+  column-gap: 2rem;
   row-gap: 2rem;
 `;
 
